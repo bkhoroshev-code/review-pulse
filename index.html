@@ -3,73 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ReviewPulse AI — Ответы на отзывы</title>
-    <!-- Подключаем надежный Bootstrap для гарантированного темного дизайна -->
+    <title>ReviewPulse AI — Интеллектуальный генератор ответов</title>
+    <!-- Подключаем Bootstrap 5 и Google Fonts для красивого шрифта Inter -->
     <link href="https://jsdelivr.net" rel="stylesheet">
+    <link href="https://googleapis.com" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at top right, #1e1b4b 0%, #0f172a 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+        }
+        .form-control, .form-select {
+            background-color: rgba(15, 23, 42, 0.6) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: #f1f5f9 !important;
+            border-radius: 12px;
+            padding: 12px;
+            transition: all 0.3s ease;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #06b6d4 !important;
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.15) !important;
+        }
+        .btn-gradient {
+            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            border: none;
+            color: white;
+            font-weight: 600;
+            border-radius: 12px;
+            padding: 14px;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+        .btn-gradient:hover {
+            transform: translateY(-1px);
+            opacity: 0.95;
+            color: white;
+        }
+        .text-gradient {
+            background: linear-gradient(135deg, #a5f3fc 0%, #00d8f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
 </head>
-<body class="bg-dark text-light min-vh-row d-flex flex-column justify-content-between" style="background-color: #0f172a !important;">
+<body class="d-flex flex-col justify-content-between">
 
-    <!-- Шапка сайта -->
-    <header class="p-3 border-bottom border-secondary bg-black bg-opacity-50">
-        <div class="container max-w-md d-flex justify-content-between align-items-center">
-            <h1 class="h4 mb-0 font-weight-bold text-info">🚀 ReviewPulse <span class="text-white">AI</span></h1>
-            <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25">MVP Версия (РФ)</span>
+    <!-- Красивая Шапка -->
+    <header class="py-4 border-bottom" style="border-color: rgba(255,255,255,0.05) !important;">
+        <div class="container d-flex justify-content-between align-items-center" style="max-width: 900px;">
+            <div class="d-flex align-items-center gap-2">
+                <span class="fs-3">🚀</span>
+                <h1 class="h4 mb-0 fw-bold tracking-tight">ReviewPulse <span class="text-gradient">AI</span></h1>
+            </div>
+            <span class="badge bg-dark border text-info px-3 py-2 rounded-pill" style="border-color: rgba(6,182,212,0.3) !important;">B2B Платформа v1.0</span>
         </div>
     </header>
 
-    <!-- Основной контент -->
-    <main class="flex-grow-1 py-5">
-        <div class="container" style="max-w-xl: 600px; max-width: 600px;">
-            <div class="card bg-secondary bg-opacity-10 border-secondary p-4 rounded-4 shadow-lg text-white" style="background-color: #1e293b !important;">
-                <h2 class="h5 mb-4 text-white-50">Генератор авто-ответов для карт (Яндекс, Google, 2GIS)</h2>
-                
-                <div class="mb-3">
-                    <label class="form-label small text-white-50">API Ключ (DeepSeek/OpenRouter):</label>
-                    <input type="password" id="apiKey" placeholder="sk-or-v1-..." class="form-control bg-dark text-info border-secondary">
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label small text-white-50">Название компании:</label>
-                        <input type="text" id="bizName" value="Кофейня 'Бодрый Кот'" class="form-control bg-dark text-white border-secondary">
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label small text-white-50">Оценка отзыва (1-5):</label>
-                        <select id="rating" class="form-select bg-dark text-warning border-secondary">
-                            <option value="5">⭐⭐⭐⭐⭐ (5)</option>
-                            <option value="4">⭐⭐⭐⭐ (4)</option>
-                            <option value="3">⭐⭐⭐ (3)</option>
-                            <option value="2">⭐⭐ (2)</option>
-                            <option value="1">⭐ (1)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label small text-white-50">Текст отзыва клиента:</label>
-                    <textarea id="reviewText" rows="4" placeholder="Вставьте сюда отзыв с карт..." class="form-control bg-dark text-white border-secondary"></textarea>
-                </div>
-
-                <button onclick="generateReply()" id="btnText" class="btn btn-info w-text w-100 text-white fw-bold py-2 mt-2 shadow">
-                    Сгенерировать ответ через ИИ
-                </button>
-
-                <!-- Результат работы ИИ -->
-                <div id="resultBlock" class="mt-4 p-3 bg-black bg-opacity-25 border border-secondary rounded-3 d-none">
-                    <h3 class="h6 text-success text-uppercase small mb-2">Идеальный ответ готов:</h3>
-                    <p id="aiReply" class="p-3 bg-dark rounded border border-secondary small text-white-50 select-all" style="cursor: pointer;"></p>
-                    <p class="text-muted small mb-0" style="font-size: 11px;">💡 Текст выше можно скопировать и сразу вставить на карты.</p>
+    <!-- Основной блок лендинга -->
+    <main class="container my-5 flex-grow-1" style="max-width: 900px;">
+        <div class="row g-5 align-items-center">
+            
+            <!-- Левая сторона: Маркетинговый текст -->
+            <div class="col-lg-5">
+                <h2 class="display-6 fw-bold mb-3">Автоматизируйте ответы на <span class="text-gradient">картинки бренда</span></h2>
+                <p class="text-secondary lead fs-6">Увеличивайте рейтинг заведения на Яндекс.Картах, Google Maps и 2GIS с помощью искусственного интеллекта. Экономьте до 20 часов работы менеджера еженедельно.</p>
+                <div class="mt-4 d-flex flex-column gap-2 text-secondary small">
+                    <div>✨ 100% уникальные и живые ответы</div>
+                    <div>⚡️ Генерация ответа всего за 2 секунды</div>
+                    <div>🔥 Работает со всеми типами отзывов</div>
                 </div>
             </div>
+
+            <!-- Правая сторона: Наша рабочая ИИ-форма -->
+            <div class="col-lg-7">
+                <div class="glass-card p-4 p-md-5 shadow-lg">
+                    <h3 class="h5 mb-4 fw-semibold text-white">Попробовать инструмент бесплатно</h3>
+                    
+                    <div class="mb-3">
+                        <label class="form-label small text-white-50 fw-medium">Ваш API Ключ (OpenRouter):</label>
+                        <input type="password" id="apiKey" placeholder="sk-or-v1-..." class="form-control">
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-7 mb-3">
+                            <label class="form-label small text-white-50 fw-medium">Название компании:</label>
+                            <input type="text" id="bizName" value="Кофейня 'Бодрый Кот'" class="form-control">
+                        </div>
+                        <div class="col-sm-5 mb-3">
+                            <label class="form-label small text-white-50 fw-medium">Оценка отзыва:</label>
+                            <select id="rating" class="form-select text-warning fw-bold">
+                                <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+                                <option value="4">⭐⭐⭐⭐ (4)</option>
+                                <option value="3">⭐⭐⭐ (3)</option>
+                                <option value="2">⭐⭐ (2)</option>
+                                <option value="1">⭐ (1)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small text-white-50 fw-medium">Текст отзыва клиента:</label>
+                        <textarea id="reviewText" rows="4" placeholder="Вставьте текст отзыва из Яндекса или 2GIS..." class="form-control"></textarea>
+                    </div>
+
+                    <button onclick="generateReply()" id="btnText" class="btn btn-gradient w-100 shadow-sm">
+                        Сгенерировать идеальный ответ
+                    </button>
+
+                    <!-- Блок с готовым ответом от ИИ -->
+                    <div id="resultBlock" class="mt-4 p-4 rounded-4 d-none" style="background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(16, 185, 129, 0.2);">
+                        <h4 class="h6 text-success fw-bold text-uppercase tracking-wider mb-2">Ответ успешно сгенерирован:</h4>
+                        <p id="aiReply" class="mb-0 text-white-50 leading-relaxed bg-dark bg-opacity-25 p-3 rounded-3 border border-secondary border-opacity-25 select-all" style="font-size: 14px;"></p>
+                        <div class="text-muted mt-2" style="font-size: 11px;">📋 Нажмите на текст, чтобы быстро выделить его и скопировать.</div>
+                    </div>
+
+                </div>
+            </div>
+
         </div>
     </main>
 
     <!-- Подвал -->
-    <footer class="p-3 text-center small text-muted border-top border-secondary bg-black bg-opacity-50">
-        &copy; 2026 ReviewPulse AI. Работает без серверов в РФ.
+    <footer class="py-4 text-center small text-secondary border-top" style="border-color: rgba(255,255,255,0.05) !important;">
+        <div class="container">
+            &copy; 2026 ReviewPulse AI. Разработано в РФ. Все права защищены.
+        </div>
     </footer>
 
-    <!-- Логика работы сайта (JavaScript) -->
+    <!-- JS Логика -->
     <script>
         async function generateReply() {
             const apiKey = document.getElementById('apiKey').value;
@@ -82,11 +151,11 @@
             const aiReply = document.getElementById('aiReply');
 
             if(!apiKey || !reviewText) {
-                alert('Пожалуйста, введите API Ключ и текст отзыва!');
+                alert('Пожалуйста, укажите API Ключ и текст отзыва!');
                 return;
             }
 
-            btn.innerText = 'Нейросеть думает...⏳';
+            btn.innerText = 'Интеллектуальный анализ... ⏳';
             btn.disabled = true;
 
             const prompt = `Ты профессиональный PR-менеджер компании "${bizName}". Клиент оставил отзыв с оценкой ${rating} из 5. Текст отзыва: "${reviewText}". Напиши вежливый, уникальный и клиентоориентированный ответ. Не используй штампы. Отвечай строго на русском языке без лишнего текста, только ответ клиенту.`;
@@ -110,10 +179,10 @@
                 aiReply.innerText = replyText;
                 resultBlock.classList.remove('d-none');
             } catch (error) {
-                alert('Произошла ошибка запроса. Проверьте правильность API ключа.');
+                alert('Ошибка соединения. Пожалуйста, проверьте API ключ.');
                 console.error(error);
             } finally {
-                btn.innerText = 'Сгенерировать ответ через ИИ';
+                btn.innerText = 'Сгенерировать идеальный ответ';
                 btn.disabled = false;
             }
         }
