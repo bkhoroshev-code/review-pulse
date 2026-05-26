@@ -4,40 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ReviewPulse AI — Ответы на отзывы</title>
-    <!-- Самая стабильная и надежная версия стилей -->
+    <!-- Подключаем надежный Bootstrap для гарантированного темного дизайна -->
     <link href="https://jsdelivr.net" rel="stylesheet">
 </head>
-<body class="bg-gray-950 text-white min-h-screen flex flex-col justify-between">
+<body class="bg-dark text-light min-vh-row d-flex flex-column justify-content-between" style="background-color: #0f172a !important;">
 
     <!-- Шапка сайта -->
-    <header class="p-5 border-b border-gray-800 bg-gray-900">
-        <div class="max-w-4xl mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-bold tracking-wider text-cyan-400">🚀 ReviewPulse <span class="text-white">AI</span></h1>
-            <span class="text-xs bg-cyan-500 bg-opacity-10 text-cyan-400 px-3 py-1 rounded-full border border-cyan-500 border-opacity-20">MVP Версия (РФ)</span>
+    <header class="p-3 border-bottom border-secondary bg-black bg-opacity-50">
+        <div class="container max-w-md d-flex justify-content-between align-items-center">
+            <h1 class="h4 mb-0 font-weight-bold text-info">🚀 ReviewPulse <span class="text-white">AI</span></h1>
+            <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25">MVP Версия (РФ)</span>
         </div>
     </header>
 
     <!-- Основной контент -->
-    <main class="flex-grow p-6 max-w-2xl mx-auto w-full">
-        <div class="bg-gray-900 p-6 rounded-2xl border border-gray-800 shadow-2xl">
-            <h2 class="text-lg font-semibold mb-4 text-gray-300">Генератор авто-ответов для карт (Яндекс, Google, 2GIS)</h2>
-            
-            <div class="space-y-4">
-                <!-- Ввод токена -->
-                <div>
-                    <label class="block text-xs font-medium text-gray-400 mb-1">API Ключ (DeepSeek/OpenRouter):</label>
-                    <input type="password" id="apiKey" placeholder="sk-or-v1-..." class="w-full bg-gray-850 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-cyan-500 text-cyan-300 bg-gray-800">
+    <main class="flex-grow-1 py-5">
+        <div class="container" style="max-w-xl: 600px; max-width: 600px;">
+            <div class="card bg-secondary bg-opacity-10 border-secondary p-4 rounded-4 shadow-lg text-white" style="background-color: #1e293b !important;">
+                <h2 class="h5 mb-4 text-white-50">Генератор авто-ответов для карт (Яндекс, Google, 2GIS)</h2>
+                
+                <div class="mb-3">
+                    <label class="form-label small text-white-50">API Ключ (DeepSeek/OpenRouter):</label>
+                    <input type="password" id="apiKey" placeholder="sk-or-v1-..." class="form-control bg-dark text-info border-secondary">
                 </div>
 
-                <!-- Информация о компании -->
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-medium text-gray-400 mb-1">Название компании:</label>
-                        <input type="text" id="bizName" value="Кофейня 'Бодрый Кот'" class="w-full bg-gray-850 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-cyan-500 bg-gray-800">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label small text-white-50">Название компании:</label>
+                        <input type="text" id="bizName" value="Кофейня 'Бодрый Кот'" class="form-control bg-dark text-white border-secondary">
                     </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-400 mb-1">Оценка отзыва (1-5):</label>
-                        <select id="rating" class="w-full bg-gray-850 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-cyan-500 text-yellow-400 bg-gray-800">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label small text-white-50">Оценка отзыва (1-5):</label>
+                        <select id="rating" class="form-select bg-dark text-warning border-secondary">
                             <option value="5">⭐⭐⭐⭐⭐ (5)</option>
                             <option value="4">⭐⭐⭐⭐ (4)</option>
                             <option value="3">⭐⭐⭐ (3)</option>
@@ -47,29 +45,27 @@
                     </div>
                 </div>
 
-                <!-- Текст отзыва -->
-                <div>
-                    <label class="block text-xs font-medium text-gray-400 mb-1">Текст отзыва клиента:</label>
-                    <textarea id="reviewText" rows="4" placeholder="Вставьте сюда отзыв с карт..." class="w-full bg-gray-850 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-cyan-500 bg-gray-800"></textarea>
+                <div class="mb-3">
+                    <label class="form-label small text-white-50">Текст отзыва клиента:</label>
+                    <textarea id="reviewText" rows="4" placeholder="Вставьте сюда отзыв с карт..." class="form-control bg-dark text-white border-secondary"></textarea>
                 </div>
 
-                <!-- Кнопка действия -->
-                <button onclick="generateReply()" id="btnText" class="w-full bg-cyan-600 hover:bg-cyan-500 transition-colors text-white font-medium py-2.5 rounded-lg text-sm shadow-lg cursor-pointer mt-2">
+                <button onclick="generateReply()" id="btnText" class="btn btn-info w-text w-100 text-white fw-bold py-2 mt-2 shadow">
                     Сгенерировать ответ через ИИ
                 </button>
-            </div>
 
-            <!-- Результат работы ИИ -->
-            <div id="resultBlock" class="mt-6 p-4 bg-gray-850 border border-gray-800 rounded-xl hidden">
-                <h3 class="text-xs font-bold text-green-400 uppercase tracking-wider mb-2">Идеальный ответ готов:</h3>
-                <p id="aiReply" class="text-sm text-gray-200 leading-relaxed bg-gray-950 p-3 rounded-lg border border-gray-800 select-all" title="Нажмите, чтобы выделить"></p>
-                <p class="text-[10px] text-gray-500 mt-2">💡 Текст выше можно скопировать и сразу вставить на карты.</p>
+                <!-- Результат работы ИИ -->
+                <div id="resultBlock" class="mt-4 p-3 bg-black bg-opacity-25 border border-secondary rounded-3 d-none">
+                    <h3 class="h6 text-success text-uppercase small mb-2">Идеальный ответ готов:</h3>
+                    <p id="aiReply" class="p-3 bg-dark rounded border border-secondary small text-white-50 select-all" style="cursor: pointer;"></p>
+                    <p class="text-muted small mb-0" style="font-size: 11px;">💡 Текст выше можно скопировать и сразу вставить на карты.</p>
+                </div>
             </div>
         </div>
     </main>
 
     <!-- Подвал -->
-    <footer class="p-4 text-center text-xs text-gray-600 border-t border-gray-800 bg-gray-900">
+    <footer class="p-3 text-center small text-muted border-top border-secondary bg-black bg-opacity-50">
         &copy; 2026 ReviewPulse AI. Работает без серверов в РФ.
     </footer>
 
@@ -112,7 +108,7 @@
                 const replyText = data.choices[0].message.content;
 
                 aiReply.innerText = replyText;
-                resultBlock.classList.remove('hidden');
+                resultBlock.classList.remove('d-none');
             } catch (error) {
                 alert('Произошла ошибка запроса. Проверьте правильность API ключа.');
                 console.error(error);
