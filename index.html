@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReviewPulse AI — Ответы на отзывы</title>
+    <!-- Подключаем красивый современный стиль TailwindCSS -->
+    <script src="https://jsdelivr.net"></script>
+</head>
+<body class="bg-slate-900 text-white min-h-screen flex flex-col justify-between">
+
+    <!-- Шапка сайта -->
+    <header class="p-5 border-b border-slate-800 bg-slate-950">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold tracking-wider text-cyan-400">🚀 ReviewPulse <span class="text-white">AI</span></h1>
+            <span class="text-xs bg-cyan-500/10 text-cyan-400 px-3 py-1 rounded-full border border-cyan-500/20">MVP Версия (РФ)</span>
+        </div>
+    </header>
+
+    <!-- Основной контент -->
+    <main class="flex-grow p-6 max-w-2xl mx-auto w-full">
+        <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800 shadow-2xl">
+            <h2 class="text-lg font-semibold mb-4 text-slate-300">Генератор авто-ответов для карт (Яндекс, Google, 2GIS)</h2>
+            
+            <div class="space-y-4">
+                <!-- Ввод токена (чтобы вы не тратили свои деньги, клиент вводит свой токен, либо вы зашиваете бесплатный) -->
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">API Ключ (DeepSeek/OpenRouter):</label>
+                    <input type="password" id="apiKey" placeholder="sk-or-v1-..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-cyan-500 text-cyan-300">
+                </div>
+
+                <!-- Информация о компании -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Название компании:</label>
+                        <input type="text" id="bizName" value="Кофейня 'Бодрый Кот'" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-cyan-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Оценка отзыва (1-5):</label>
+                        <select id="rating" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-cyan-500 text-amber-400">
+                            <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+                            <option value="4">⭐⭐⭐⭐ (4)</option>
+                            <option value="3">⭐⭐⭐ (3)</option>
+                            <option value="2">⭐⭐ (2)</option>
+                            <option value="1">⭐ (1)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Текст отзыва -->
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Текст отзыва клиента:</label>
+                    <textarea id="reviewText" rows="4" placeholder="Вставьте сюда отзыв с карт..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-cyan-500"></textarea>
+                </div>
+
+                <!-- Кнопка действия -->
+                <button onclick="generateReply()" id="btnText" class="w-full bg-cyan-600 hover:bg-cyan-500 transition-colors text-white font-medium py-2.5 rounded-lg text-sm shadow-lg shadow-cyan-600/20 cursor-pointer">
+                    Сгенерировать ответ через ИИ
+                </button>
+            </div>
+
+            <!-- Результат работы ИИ -->
+            <div id="resultBlock" class="mt-6 p-4 bg-slate-900 border border-slate-800 rounded-xl hidden">
+                <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-2">Идеальный ответ готов:</h3>
+                <p id="aiReply" class="text-sm text-slate-200 leading-relaxed bg-slate-950 p-3 rounded-lg border border-slate-800 select-all" title="Нажмите, чтобы выделить"></p>
+                <p class="text-[10px] text-slate-500 mt-2">💡 Текст выше можно скопировать и сразу вставить на карты.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Подвал -->
+    <footer class="p-4 text-center text-xs text-slate-600 border-t border-slate-800 bg-slate-950">
+        &copy; 2026 ReviewPulse AI. Работает без серверов в РФ.
+    </footer>
+
+    <!-- Логика работы сайта (JavaScript) -->
+    <script>
+        async function generateReply() {
+            const apiKey = document.getElementById('apiKey').value;
+            const bizName = document.getElementById('bizName').value;
+            const rating = document.getElementById('rating').value;
+            const reviewText = document.getElementById('reviewText').value;
+            
+            const btn = document.getElementById('btnText');
+            const resultBlock = document.getElementById('resultBlock');
+            const aiReply = document.getElementById('aiReply');
+
+            if(!apiKey || !reviewText) {
+                alert('Пожалуйста, введите API Ключ и текст отзыва!');
+                return;
+            }
+
+            btn.innerText = 'Нейросеть думает...⏳';
+            btn.disabled = true;
+
+            // Формируем промпт для ИИ
+            const prompt = `Ты профессиональный PR-менеджер компании "${bizName}". Клиент оставил отзыв с оценкой ${rating} из 5. Текст отзыва: "${reviewText}". Напиши вежливый, уникальный и клиентоориентированный ответ. Не используй штампы. Отвечай строго на русском языке без лишнего текста, только ответ клиенту.`;
+
+            try {
+                // Отправляем запрос на OpenRouter (сервис объединяющий ИИ, работает в РФ без VPN)
+                const response = await fetch("https://openrouter.ai", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${apiKey}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        "model": "deepseek/deepseek-chat", // Используем мощный и дешевый DeepSeek-V3
+                        "messages": [{"role": "user", "content": prompt}]
+                    })
+                });
+
+                const data = await response.json();
+                const replyText = data.choices[0].message.content;
+
+                aiReply.innerText = replyText;
+                resultBlock.classList.remove('hidden');
+            } catch (error) {
+                alert('Произошла ошибка запроса. Проверьте правильность API ключа.');
+                console.error(error);
+            } finally {
+                btn.innerText = 'Сгенерировать ответ через ИИ';
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
